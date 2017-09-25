@@ -1,5 +1,6 @@
-# define the absolute position of the helix A as distance vector from the origin 
-# and the orientation as rotation from the reference structure
+# Define the absolute position of the helix A as distance vector from the
+# origin and the orientation as rotation from the reference structure
+
 
 colvar {
     name hApos
@@ -16,6 +17,7 @@ colvar {
     }
 }
 
+
 colvar {
     name hAorient
     width 0.05
@@ -27,6 +29,7 @@ colvar {
         refPositionsFile alpha_ideal_ref.xyz
     }
 }
+
 
 harmonic {
     colvars hApos hAorient

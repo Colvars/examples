@@ -1,119 +1,119 @@
 # -*- tcl -*-
-# molecular dynamics
 
-set mol_name            15leu2x
+set numsteps 50000
 
-# if the environment variable starting_structure is not set, defaults to the one written below
+# If the environment variable starting_structure is not set, the script
+# defaults to the value written below
 if { [info exists env(starting_structure)] } {
     set starting_structure $env(starting_structure)
 } else {
     set starting_structure "s0"
 }
 
-# set the name of this job based on the name of this script
-set job                 ${mol_name}.${starting_structure}.[file rootname [file tail [info script]]]
+# Set the name of this job based on the name of this script
+set job 15leu2x.${starting_structure}.[file rootname [file tail [info script]]]
 
 
-# input
+# Input
 
-# physical description 
+# Physical description
 paraTypeCharmm          on
-structure               ${mol_name}.psf
+structure               15leu2x.psf
 parameters              par_all36_prot.prm ; # CHARMM36 force field parameters
 1-4scaling              1.0
 exclude                 scaled1-4
 rigidBonds              all
 useSettle               on
 
-# cutoffs and approximations
+# Cutoffs and approximations
 switchdist              10.0
 cutoff                  12.0
 pairlistdist            13.5
 stepspercycle           20
-margin                  2.0
 timestep                2.0
 
-# initial data and boundary conditions
+# Initial data and boundary conditions
 
+coordinates         15leu2x.s0.pdb ; # One is as good as another
 if { [info exists starting_structure] } {
-    coordinates         ${mol_name}.${starting_structure}.pdb
-    binCoordinates      ${mol_name}.${starting_structure}.equil.coor
-} else {
-    coordinates         ${mol_name}.pdb
+    binCoordinates      15leu2x.${starting_structure}.equil.coor
 }
+
 COMmotion               no
 zeroMomentum            yes
 seed                    87654321
 
-# thermodynamic ensemble
+# Thermodynamic ensemble
 temperature             0.0
 langevin                on
 langevinTemp            300.0
 langevinDamping         10.0            
 
-# output
+# Output
 
-# main output and restarts
+# Main output and restarts
 outputName              ${job}
 binaryOutput            yes
 restartName             ${job}
-restartFreq             1000
+restartFreq             5000
 binaryRestart           yes
 
-# trajectory output
+# Trajectory output
 DCDfile                 ${job}.dcd
 DCDfreq                 500
 DCDUnitCell             yes
 
-# standard output frequencies
+# Standard output frequencies
 outputEnergies          500
 outputMomenta           500
 outputTiming            500
 
-# enable the collective variables module
-colvars                 on
-# load the colvars configuration: it can be all contained in this file,
-# or as additional files and/or inlined (see below) to fit your needs
-colvarsConfig           dist_orient.colvars.in
 
-# hold helix A in place, so that dist and orient can be calculated 
-# in a consistent frame
+# Enable the collective variables module (Colvars)
+colvars on
+
+# Load main Colvars configuration: it can be all contained in this file,
+# but we are doing it in pieces to control what to load
+cv configfile dist_orient.colvars.in
+
+# Hold helix A in place, so that variables can be computed in a consistent
+# frame of reference: note that these restraints apply only to the center of
+# mass and orientation of helix A, and unlike position restraints they won't
+# affect its internal dynamics
 cv configfile restrain_helixA.colvars.in
 
-# set up the moving restraint: for best results, set targetNumSteps equal
+# Set up the moving restraint: for best results, set targetNumSteps equal
 # to the total number of MD steps (see "run" below)
-cv config "harmonic {
+cv config "
+harmonic {
 
     name drag
 
     colvars dist orient
 
-    # this force constant is in kcal/mol: 
-    # to get its value in the unit of each colvar, divide it by width^2
+    # This force constant is in kcal/mol: to get its value relative to the
+    # unit of each colvar, divide it by width^2
     forceConstant 5.0
 
-    # initial centers of the restraint for dist and orient;
+    # Initial centers of the restraint for dist and orient;
     # you can use cv update and cv printframe in VMD to get these numbers 
     # for the desired starting point (in this case, last frame of s0)
     centers         (  -5.1,   8.4, -1.3)  ( 0.688,  0.025,  0.268,  0.674)
 
-    # final centers of the restraint for dist and orient (first frame of s0)
+    # Final centers of the restraint for dist and orient (first frame of s0)
     targetCenters   (  -3.6,  15.5,  0.0)  ( 0.332,  0.121, -0.025,  0.935)
 
-    # move from center to targetCenters in this many steps
+    # Move from center to targetCenters in this many steps
     targetNumSteps 50000
 
-    # record the work performed by this restraint
+    # Record the work performed by this restraint
     # (it will appear in the colvars.traj file)
     outputAccumulatedWork yes
 }"
 
-# define the free energy calculation (thermodynamic integration / ABF)
-cv configfile calc_fe.colvars.in
-
-# # restrain both peptides to be helical at all times
+# # Restrain both peptides to be helical at all times
 # cv configfile force_helical_structure.colvars.in
 
-# execute the MD run
-run 50000
+# Execute the MD run
+run ${numsteps}
 

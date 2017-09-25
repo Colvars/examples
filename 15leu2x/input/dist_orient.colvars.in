@@ -15,6 +15,7 @@ colvar {
     }
 }
 
+
 # orientation of helix B
 colvar {
     name orient
@@ -29,7 +30,7 @@ colvar {
 }
 
 
-# norm of "dist"
+# scalar distance (norm of "dist")
 colvar {
     name r
 

@@ -1,9 +1,0 @@
-abf {
-    colvars r
-
-    # if there is already a moving restraint, 
-    # we mustn't add the biasing force on top of it
-    applyBias off 
-
-    outputFreq 1000
-}
