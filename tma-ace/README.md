@@ -13,3 +13,8 @@ implemented by Colvars:
 - `abf`: Adaptive Biasing Force (ABF), using the total-forces estimator
   (classic thermodynamic integration)
 - `mtd`: metadynamics
+
+ABF is directly based on thermodynamic integration (TI), but it is also
+possible to use the TI free energy estimator for other biases: add the keyword
+`writeTIPMF yes` to the configuration of the `harmonic` or `metadynamics`
+biases.
