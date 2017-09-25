@@ -1,0 +1,98 @@
+# -*- tcl -*-
+
+set run                 [file rootname [file tail [info script]]]
+
+# set default options
+if { [info exists mol_name] == 0 } {
+    set mol_name "tma-aco"
+    set pbc "yes"
+    if { [info exists coor_pdb_file] == 0 } {
+        set coor_pdb_file "../Common/tma-aco.pdb"
+    }
+    set par_files [list \
+                       "../Common/charmm/par_all36_cgenff.prm" \
+                       "../Common/charmm/par_all36_prot.prm" \
+                       "../Common/charmm/par_all36_lipid.prm" \
+                       "../Common/charmm/par_all36_na.prm" \
+                       "../Common/charmm/par_all36_carb.prm" \
+                       "../Common/charmm/par_all36_cgenff.prm"]
+    proc num_atoms {} {
+        return 30
+    }
+#    source ../Common/delete_tmp_files.tcl
+#    file link "index.ndx" "../Common/tma-cl.ndx"
+}
+
+if { [info exists output_name] == 0 } {
+    set output_name "test"
+}
+
+if { [info exists temperature] == 0 } {
+    set temperature 300.0
+}
+
+paraTypeCharmm          on
+structure               ../Common/${mol_name}.psf
+foreach par_file ${par_files} {
+    parameters          ${par_file}
+}
+1-4scaling              1.0
+exclude                 scaled1-4
+rigidBonds              all
+useSettle               on
+
+switchdist              10.0
+cutoff                  12.0
+pairlistdist            14.0
+fullElectFrequency      1
+nonbondedFreq           1
+
+coordinates             "../Common/tma-aco.pdb"
+extendedSystem          "../Common/tma-aco.xsc"
+if { [info exists coor_bin_file] > 0 } {
+    binCoordinates      ${coor_bin_file}
+}
+if { [info exists vel_bin_file] > 0 } {
+    binVelocities       ${vel_bin_file}
+} else {
+    if { [info exists vel_pdb_file] > 0 } {
+        velocities      ${vel_pdb_file}
+    } else {
+        seed            87654321
+        temperature     ${temperature}
+    }
+}
+
+COMmotion               no
+zeroMomentum            yes
+
+langevin                on
+langevinTemp            ${temperature}
+langevinDamping         10.0            
+
+timestep                1.0
+
+outputName              ${output_name}
+restartName             ${output_name}
+restartFreq             100000
+if { [info exists pdb_restart] > 0 } {
+    binaryRestart       no
+    binaryOutput        no
+} else {
+    binaryRestart       yes
+    binaryOutput        yes
+}
+
+DCDfile                 ${output_name}.coor.dcd
+DCDfreq                 1000
+DCDUnitCell             yes
+
+outputEnergies          1000
+outputMomenta           1000
+outputPressure          1000
+outputTiming            1000
+
+
+if { [info exists numsteps] == 0 } {
+    set numsteps 100000
+}

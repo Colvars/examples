@@ -1,0 +1,33 @@
+# -*- tcl -*-
+
+# The output file name will be determined by the name of this script
+set output_name [file rootname [file tail [info script]]]
+
+set numsteps 100000
+
+source ../Common/common.namd
+
+colvars on
+
+cv configfile ../Common/distance.colvars.in
+
+
+set bias_conf "
+harmonic {
+    name umby
+    colvars dist
+    forceConstant 0.05 # Note: this will also be rescaled by dist's width**2
+    centers 4.0
+    targetCenters 12.0
+    targetNumStages 9
+    targetNumSteps [expr ${numsteps} / 9]
+    outputCenters yes
+    outputAccumulatedWork yes
+}
+"
+
+cv config ${bias_conf}
+
+
+run ${numsteps}
+

@@ -1,0 +1,16 @@
+# Definition for distance variable
+
+colvar {
+    name dist
+
+    width 0.1 # Spacing of grids 
+    lowerBoundary 0.0
+    upperBoundary 12.0 # Determined by size of unit cell used
+    hardLowerBoundary yes # Inform biases that lower boundary won't be crossed
+    hardUpperBoundary yes # Inform biases that upper boundary won't be crossed
+
+    distance {
+        group1 { atomNumbersRange 1-17 }  
+        group2 { atomNumbersRange 18-27 }
+    }
+}

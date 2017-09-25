@@ -1,0 +1,30 @@
+*~
+*.o
+*.so
+*.a
+*.x
+*.exe
+*.pyc
+
+.*.swp
+
+# output files from NAMD
+*.diff
+*.BAK
+*.old
+*.coor
+*.coor.dcd
+*.vel
+*.xsc
+*.backup
+*.state
+*.traj
+*.out
+*.err
+*.count
+*.grad
+*.pmf
+# output files from file-based mw-metadynamics
+*.rep?.files.txt
+replicas.registry.txt
+*.rep?.hills
