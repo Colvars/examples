@@ -1,0 +1,51 @@
+# distance vector between the two helices' centers of mass
+colvar {
+    name dist
+    width 0.25
+    distanceVec {
+        forceNoPBC yes
+        group1 {
+            psfSegID HA
+            atomNameResidueRange CA 1-15
+        }
+        group2 {
+            psfSegID HB
+            atomNameResidueRange CA 1-15
+        }
+    }
+}
+
+# orientation of helix B
+colvar {
+    name orient
+    width 0.025
+    orientation {
+        atoms {
+            psfSegID HB
+            atomNameResidueRange CA 1-15
+        }
+        refPositionsFile alpha_ideal_ref.xyz
+    }
+}
+
+
+# norm of "dist"
+colvar {
+    name r
+
+    lowerBoundary 7.0
+    upperBoundary 20.0
+    width 0.25
+
+    distance {
+        forceNoPBC yes
+        group1 {
+            psfSegID HA
+            atomNameResidueRange CA 1-15
+        }
+        group2 {
+            psfSegID HB
+            atomNameResidueRange CA 1-15
+        }
+    }
+}

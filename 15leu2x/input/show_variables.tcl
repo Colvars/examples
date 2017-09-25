@@ -1,0 +1,2 @@
+play colvar_display.tcl
+start_colvar_display

@@ -1,0 +1,29 @@
+colvar {
+    name hArmsd
+    width 0.25
+    rmsd {
+        atoms {
+            psfSegID HA
+            atomNameResidueRange CA 1-15
+        }
+        refPositionsFile alpha_ideal_ref.xyz
+    }
+}
+
+colvar {
+    name hBrmsd
+    width 0.25
+    rmsd {
+        atoms {
+            psfSegID HB
+            atomNameResidueRange CA 1-15
+        }
+        refPositionsFile alpha_ideal_ref.xyz
+    }
+}
+
+harmonic {
+    colvars hArmsd hBrmsd 
+    centers 0.0    0.0
+    forceConstant 5.0
+}

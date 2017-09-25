@@ -1,0 +1,155 @@
+
+# angle of rotation around the x axis for the second helix
+# (the first is assumed to be fixed: check that it is)
+colvar {
+
+    name cross_angle
+
+    width 3.0
+
+    lowerBoundary -180.0
+    upperBoundary  180.0
+
+    lowerWall -60.0
+    upperWall  60.0
+    lowerWallConstant 1.0
+    upperWallConstant 1.0
+
+    spinAngle {
+        axis (1.0, 0.0, 0.0)
+        atoms {
+            psfSegID H2
+            atomNameResidueRange CA 1-20
+        }
+        refPositionsFile alpha-ideal.Ca.down.pdb
+    }
+} 
+
+
+# angle of rotation around z axis (keep phase of the helix)
+colvar {
+
+    name phase_angle
+
+    width 3.0
+
+    spinAngle {
+        axis (0.0, 0.0, 1.0)
+        atoms {
+            psfSegID H2
+            atomNameResidueRange CA 1-20
+            
+        }
+        refPositionsFile alpha-ideal.Ca.pdb
+    }
+} 
+
+
+# 
+# other inter-molecular harmonic restraints
+#
+
+harmonic {
+    # restrain translations of helix 2 away from x axis
+    colvars        dy_12 dz_12
+    centers        0.0   0.0
+    forceConstant  5.0
+}
+
+harmonic {
+    # prevent motions motion of helix 2 out of the y-z plane
+    colvars        tilt_x_12
+    centers        1.0
+    forceConstant  5.0
+}
+
+
+colvar {
+
+    # rotation off the y-z plane
+
+    name tilt_x_12
+
+    width 0.01
+
+    tilt {
+        axis (1.0, 0.0, 0.0)
+        atoms {
+            psfSegID H2
+            atomNameResidueRange CA 1-20
+            
+        }
+        refPositionsFile alpha-ideal.Ca.down.pdb
+    }
+} 
+
+
+colvar {
+
+    name dy_12
+
+    width 0.1
+
+    distanceZ {
+        axis (0.0, 1.0, 0.0)
+        main {
+            psfSegID H2
+            atomNameResidueRange CA 1-20
+        }
+        ref {
+            psfSegID H1
+            atomNameResidueRange CA 1-20
+        }
+    }
+} 
+
+colvar {
+
+    name dz_12
+
+    width 0.1
+
+    distanceZ {
+        axis (0.0, 0.0, 1.0)
+        main {
+            psfSegID H2
+            atomNameResidueRange CA 1-20
+        }
+        ref {
+            psfSegID H1
+            atomNameResidueRange CA 1-20
+        }
+    }
+} 
+
+
+colvar {
+    # distance from origin of helix 1
+    name dist_o_H1
+    width 0.1
+    distance {
+        group1 {
+            psfSegID H1
+            atomNameResidueRange CA 1-20
+        }
+        group2 {
+            dummyAtom (0.0, 0.0, 0.0)
+        }
+    }
+} 
+
+colvar {
+
+    # absolute orientation of helix 1
+
+    name orient_H1
+    width 0.01
+    orientation {
+        atoms {
+            psfSegID H1
+            atomNameResidueRange CA 1-20
+        }
+        refPositionsFile alpha-ideal.Ca.pdb
+    }
+} 
+
