@@ -1,0 +1,28 @@
+# -*- tcl -*-
+
+# Metadynamics protocol
+
+cv config "
+
+# This string is not Tcl code, but you can still use in here Tcl variables,
+# such as ${numsteps}, and bracket expansion, such as [outputEnergies].
+
+metadynamics {
+
+    name m
+
+    colvars r
+
+    # Value of Gaussian height (kcal/mol)
+    hillWeight 0.01
+
+    # Value of Gaussian width (i.e. 2*sigma) in units of grid points
+    hillWidth 1.0
+
+    # Put down 5k Gaussian hills
+    newHillFrequency [expr ${numsteps} / 5000]
+
+    # Since this is a 1D bias, we can also integrate the total forces for an
+    # additional estimate of the PMF
+    writeTIPMF yes
+}"

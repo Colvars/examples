@@ -82,37 +82,26 @@ cv configfile dist_orient.colvars.in
 # affect its internal dynamics
 cv configfile restrain_helixA.colvars.in
 
-# Set up the moving restraint: for best results, set targetNumSteps equal
-# to the total number of MD steps (see "run" below)
-cv config "
-harmonic {
-
-    name drag
-
-    colvars dist orient
-
-    # This force constant is in kcal/mol: to get its value relative to the
-    # unit of each colvar, divide it by width^2
-    forceConstant 5.0
-
-    # Initial centers of the restraint for dist and orient;
-    # you can use cv update and cv printframe in VMD to get these numbers 
-    # for the desired starting point (in this case, last frame of s0)
-    centers         (  -5.1,   8.4, -1.3)  ( 0.688,  0.025,  0.268,  0.674)
-
-    # Final centers of the restraint for dist and orient (first frame of s0)
-    targetCenters   (  -3.6,  15.5,  0.0)  ( 0.332,  0.121, -0.025,  0.935)
-
-    # Move from center to targetCenters in this many steps
-    targetNumSteps 50000
-
-    # Record the work performed by this restraint
-    # (it will appear in the colvars.traj file)
-    outputAccumulatedWork yes
-}"
-
-# # Restrain both peptides to be helical at all times
+# # Optional: Restrain both peptides to be helical at all times
 # cv configfile force_helical_structure.colvars.in
+
+
+# Protocol for a 1D SMD simulation (also includes TI PMF calculation)
+source drag_1d.namd
+
+# # Alternative: protocol for a 6D SMD simulation
+# source drag_6d.namd
+
+# # Alternative: protocol for a 1D metadynamics simulation
+# source mtd_1d.namd
+
+# # Alternative: protocol for a 1D ABF simulation
+# source abf.namd
+
+# # Alternative: protocol for a 2D metadynamics simulation (you may want to
+# # increase numsteps)
+# source mtd_2d.namd
+
 
 # Execute the MD run
 run ${numsteps}

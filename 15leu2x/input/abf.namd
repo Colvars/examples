@@ -1,0 +1,19 @@
+# -*- tcl -*-
+
+# ABF protocol
+
+cv config "
+
+# This string is not Tcl code, but you can still use in here Tcl variables,
+# such as ${numsteps}, and bracket expansion, such as [outputEnergies].
+
+abf {
+
+    name m
+
+    colvars r
+    
+    # ABF may try too hard to integrate highly repulsive barriers: this option
+    # is an attempt at preventing that
+    maxForce 50.0
+}"

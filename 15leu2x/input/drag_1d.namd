@@ -1,0 +1,41 @@
+# -*- tcl -*-
+
+# Steered MD simulation
+
+cv config "
+
+# This string is not Tcl code, but you can still use in here Tcl variables,
+# such as ${numsteps}, and bracket expansion, such as [outputEnergies].
+
+harmonic {
+
+    name drag
+
+    colvars r
+
+    # This force constant is in kcal/mol: to get its value relative to the
+    # unit of each colvar, divide it by width^2
+    forceConstant 5.0
+
+    # Initial center(s) of the restraint; you can use cv update and 
+    # cv printframe in VMD to get the number for the desired starting point
+    # (in this case, the last frame of s0)
+    centers 10.0
+
+    # Final center(s) of the restraint (first frame of s0)
+    targetCenters 16.0
+
+    # Move from center to targetCenters in these many steps
+    targetNumSteps ${numsteps}
+
+    # Record the work performed by this restraint
+    # (it will be written in the colvars.traj file)
+    outputAccumulatedWork yes
+
+    # Write also the restraint center(s), useful to plot the work
+    outputCenters yes
+
+    # Since this is a 1D bias, we can also integrate the total forces for an
+    # additional estimate of the PMF
+    writeTIPMF yes
+}"
