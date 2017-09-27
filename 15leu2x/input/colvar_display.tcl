@@ -14,7 +14,7 @@
 #
 ###########################################################
 
-proc start_colvar_display { {cvs all} {text_color blue} {text_position {15 15 15}} {molid top} } {
+proc start_colvar_display { {cvs all} {text_color blue} {text_position {15 15 15}} {molid top} } {
 
   global text_pos text_col cv_handle cv_list vmd_frame
 
