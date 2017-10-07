@@ -10,7 +10,7 @@ from __future__ import print_function
 import os
 import sys
 
-if (sys.version_info < (2, 7)):
+if (sys.version_info[:2] < (2, 7)):
     # Save some explanations
     print("Python versions prior to 2.7 are no longer supported.")
     sys.exit(1)
@@ -319,6 +319,9 @@ if (__name__ == '__main__'):
                             first=args.first,
                             last=args.last,
                             every=args.skip)
+
+    if (args.list_variables):
+        sys.exit()
 
     variables = args.variables
     if (len(variables) == 0): variables = colvars_traj.variables
