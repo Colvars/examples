@@ -22,7 +22,6 @@ harmonic {
     targetNumStages 9
     targetNumSteps [expr ${numsteps} / 9]
     outputCenters yes
-    outputAccumulatedWork yes
 }
 "
 
