@@ -1,0 +1,87 @@
+colvarsTrajFrequency 100
+colvarsRestartFrequency 100000
+
+colvar {
+    name DBC_sym
+
+    rmsd {
+        refPositionsFile ref_vacuum.pdb
+        atomPermutation {6 1 2 3 4 5}
+        atomPermutation {5 6 1 2 3 4}
+        atomPermutation {4 5 6 1 2 3}
+        atomPermutation {3 4 5 6 1 2}
+        atomPermutation {2 3 4 5 6 1}
+        atomPermutation {2 1 6 5 4 3}
+        atomPermutation {3 2 1 6 5 4}
+        atomPermutation {4 3 2 1 6 5}
+        atomPermutation {5 4 3 2 1 6}
+        atomPermutation {6 5 4 3 2 1}
+        atomPermutation {1 6 5 4 3 2}
+        atoms {
+            atomNumbers {1 2 3 4 5 6}
+            # Moving frame of reference is defined below
+            centerReference off
+            rotateReference off
+            # Reference coordinates for binding site atoms
+            # (can be the same file as ligand coordinates above)
+        }
+    }
+}
+
+
+colvar {
+    name COM_distance
+
+    distance {
+        group1 { # Ligand positions
+            atomNumbers  {1 2 3 4 5 6}
+            # Gas phase -> Fixed frame of reference
+        }
+
+        group2 { # Reference ligand COM position
+            # Measure ligand_COM colvar below in ref structure to find optimal value
+            dummyAtom (-2.121, 5.272, 9.564)
+        }
+    }
+}
+
+
+colvar {
+    # Auxiliary colvar to find the ligand COM in reference structure
+    name ligand_COM
+
+    distanceVec {
+        group2 { # Ligand positions
+            atomNumbers  {1 2 3 4 5 6}
+            # Gas phase -> Fixed frame of reference
+        }
+
+        group1 {
+            dummyAtom (0, 0, 0)
+        }
+    }
+}
+
+# Changing flat-bottom harmonic restraint on DBC
+
+harmonicWalls {
+    colvars             DBC_sym
+
+    upperWalls          1.5
+    forceConstant       0.0
+    targetForceConstant 200.0
+    targetForceExponent 6.0
+
+    targetEquilSteps    5000
+    lambdaSchedule      1.00 0.95 0.90 0.85 0.80 0.75 0.70 0.65 0.60 0.55 0.50 0.45 0.40 0.35 0.30 0.25 0.20 0.15 0.10 0.05 0.00
+    targetNumSteps      1000000
+}
+
+
+# Background flat-bottom harmonic restraint on COM
+
+harmonicWalls {
+    colvars       COM_distance
+    upperWalls    1.5
+    forceConstant 200
+}

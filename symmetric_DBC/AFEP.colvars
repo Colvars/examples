@@ -1,0 +1,77 @@
+colvarsTrajFrequency 100
+colvarsRestartFrequency 100000
+
+colvar {
+    name DBC_sym
+
+    # Grid parameters for histogramming
+    width         0.1
+    lowerboundary 0.0
+    upperboundary 2.5
+
+    rmsd {
+        refPositionsFile ref.pdb
+        atomPermutation {16214 16209 16210 16211 16212 16213}
+        atomPermutation {16213 16214 16209 16210 16211 16212}
+        atomPermutation {16212 16213 16214 16209 16210 16211}
+        atomPermutation {16211 16212 16213 16214 16209 16210}
+        atomPermutation {16210 16211 16212 16213 16214 16209}
+        atomPermutation {16210 16209 16214 16213 16212 16211}
+        atomPermutation {16211 16210 16209 16214 16213 16212}
+        atomPermutation {16212 16211 16210 16209 16214 16213}
+        atomPermutation {16213 16212 16211 16210 16209 16214}
+        atomPermutation {16214 16213 16212 16211 16210 16209}
+        atomPermutation {16209 16214 16213 16212 16211 16210}
+        atoms {
+            atomNumbers {16209 16210 16211 16212 16213 16214}
+            # Moving frame of reference
+            centerReference yes
+            rotateReference yes
+            fittingGroup {
+                # Define binding site atoms used for fitting
+                atomNumbers {19 90 1087 1099 1115 1127 1137 1147 1163 1187 1194 1213 1232 1256 1270 1280 1302 1321 1345 1357 1373 1394 1406 1417 1436 1448 1458 1474 1498 1522 1533 1543 1553 1572 1586 1603 1619 1639 1656 1673 1680 1696 1710 1717 1733 1743 1750 1770 1784 1798 1814 1833 1857 1874 1893 1910 1927 1949 1973 1997 2009 2024 2034 2044 2060 2074 2093 2103 2125 2160 2184 2296 2306 2328 2352 2368 2387 2401 2415 2435 2459 2473}
+            }
+            # Reference coordinates for binding site atoms
+            # (can be the same file as ligand coordinates above)
+            refPositionsFile ref.pdb # PDB or XYZ file
+        }
+    }
+}
+
+
+colvar {
+    name protein_rotation
+
+    orientation {
+        # Reference coordinates (for protein)
+        refpositionsfile ref.pdb
+        atoms {
+            # Protein atoms used for optimal rotation
+            atomNumbers {5 19 38 58 73 90 109 133 152 164 179 186 205 229 248 270 289 310 332 344 354 369 376 397 418 432 451 458 477 484 501 520 539 553 575 588 600 612 631 645 655 665 687 698 713 732 744 766 776 795 802 826 840 851 865 872 888 907 921 943 955 970 980 995 1017 1036 1056 1070 1087 1099 1115 1127 1137 1147 1163 1187 1194 1213 1232 1256 1270 1280 1302 1321 1345 1357 1373 1394 1406 1417 1436 1448 1458 1474 1498 1522 1533 1543 1553 1572 1586 1603 1619 1639 1656 1673 1680 1696 1710 1717 1733 1743 1750 1770 1784 1798 1814 1833 1857 1874 1893 1910 1927 1949 1973 1997 2009 2024 2034 2044 2060 2074 2093 2103 2125 2136 2160 2184 2205 2219 2236 2248 2260 2272 2296 2306 2328 2352 2368 2387 2401 2415 2435 2459 2473 2480}
+        }
+    }
+}
+
+
+# Harmonic restraint to prevent protein rotation
+
+harmonic {
+    colvars       protein_rotation
+    # Quaternion components are <= 1, so force constant unit is very small
+    forceConstant 10000.0
+    centers (1.0, 0.0, 0.0, 0.0)
+}
+
+# Flat-bottom harmonic restraint on DBC
+
+harmonicWalls {
+    colvars       DBC_sym
+    upperWalls    1.5
+    forceConstant 200
+}
+
+# Histogram analysis
+
+histogram {
+    colvars DBC_sym
+}
